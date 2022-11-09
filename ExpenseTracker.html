@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+             text-align: center;
+             background-image: url(https://thumbs.dreamstime.com/b/wild-flowers-plant-summer-autumn-nature-background-banner-website-55976971.jpg);
+        }
+    </style>
+</head>
+<body>
+    <form onsubmit="SaveToLocalStorage(event)">
+        <h1 style="color:olivedrab">Expense Tracker</h1>
+        <label>Choose ExpenseTracker</label>
+        <input id="num" type="number" Name="number" required />
+        <label>Choose a description</label>
+        <input id="desc" type="text" Name="description" required />
+        <lable>Choose a category</lable>
+        <select id="categ" Name="categories">
+            <option value="Travelling" >Travelling</option>
+            <option value="Food" >Food</option>
+            <option value="Shopping" >Shopping</option>
+            <option value="Clubbing" >Clubbing</option>
+            <option value="Gift" >Gift</option>
+        </select><br><br>
+        <button style="color:olivedrab">Add Expenses</button>
+    </form>
+    <ul id="NumberOfExpenses"></ul>
+    <script>
+        function SaveToLocalStorage(event){
+            event.preventDefault();
+            const Number = event.target.number.value;
+            const Description = event.target.description.value;
+            const Categories = event.target.categories.value;
+           
+            const obj = {
+                Number,
+                Description,
+                Categories
+            }
+            localStorage.setItem(obj.Number, JSON.stringify(obj))
+            DisplayOnScreen(obj)
+        }
+        window.addEventListener("DOMContentLoaded", () => {
+                const localStorageObj = localStorage;
+                const localstoragekeys  = Object.keys(localStorageObj)
+
+                for(var i =0; i< localstoragekeys.length; i++){
+                    const key = localstoragekeys[i]
+                    const userDetailsString = localStorageObj[key];
+                    const userDetailsObj = JSON.parse(userDetailsString);
+                    DisplayOnScreen(userDetailsObj)
+                }
+        })
+        function DisplayOnScreen(User){
+        const parentNode = document.getElementById("NumberOfExpenses")
+        const childNode = `<li id=${User.Number}>${User.Categories}: Expense On-${User.Description}, Price- Inr ${User.Number} 
+            <button onclick=deleteExpense('${User.Number}')> Delete </button>
+            <button onclick=editUser('${User.Number}') >Edit</button></li>`
+        parentNode.innerHTML = parentNode.innerHTML + childNode
+        
+        }
+        function editUser(number, description, categories){
+             document.getElementById('num').value = number
+             document.getElementById('desc').value = description
+             document.getElementById('categ').value = categories
+             deleteExpense(number)
+        }
+        function deleteExpense(number){
+            localStorage.removeItem(number);
+            removeExpenseFromScreen(number);
+        }
+        function removeExpenseFromScreen(number){
+            const parentNode = document.getElementById('NumberOfExpenses');
+            const childNodeToBeDeleted = document.getElementById(number);
+
+            parentNode.removeChild(childNodeToBeDeleted);
+        }
+    </script>
+   
+</body>
+</html>
